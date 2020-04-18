@@ -1,0 +1,36 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: angular-k8-app-deploy
+spec:
+  selector:
+    matchLabels:
+      app: angular-k8-app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: angular-k8-app
+    spec:
+      containers:
+        - name: angular-k8-app
+          image:  hyc-urx-docker-local.artifactory.swg-devops.com/urx-cloud/poc/angular-k8-app:latest
+          ports:
+            - containerPort: 80
+---
+# See more here https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service
+kind: Service
+apiVersion: v1
+metadata:
+  name: angular-k8-app-service
+  labels:
+    app: angular-k8s-app
+spec:
+  selector:
+    app: angular-k8-app
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
+      targetPort: 80
+  type: NodePort
